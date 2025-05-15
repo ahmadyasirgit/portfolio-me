@@ -56,13 +56,11 @@ const GeometricBackground = () => {
           </defs>
           <rect width="100%" height="100%" fill="url(#techGrid)" />
         </svg>
-      </motion.div>
-
-      {/* Dynamic abstract shapes - conditionally render fewer on small screens */}
+      </motion.div>      {/* Dynamic abstract shapes - conditionally render fewer on small screens */}
       <motion.div
         className={`absolute ${
-          isSmallScreen ? "top-5 right-5 w-40 h-40" : "top-10 right-20 w-96 h-96"
-        } rounded-full`}
+          isSmallScreen ? "top-5 right-5 w-40 h-40" : "top-10 right-5 md:right-20 w-60 md:w-96 h-60 md:h-96"
+        } rounded-full overflow-hidden`}
         style={{
           background:
             "radial-gradient(circle, rgba(145, 94, 255, 0.15) 0%, rgba(145, 94, 255, 0) 70%)",
@@ -76,13 +74,11 @@ const GeometricBackground = () => {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-      />
-
-      <motion.div
+      />      <motion.div
         className={`absolute ${
           isSmallScreen
-            ? "-bottom-10 -left-10 w-[15rem] h-[15rem]"
-            : "-bottom-20 -left-20 w-[30rem] h-[30rem]"
+            ? "-bottom-5 left-0 md:-bottom-10 md:-left-10 w-[12rem] h-[12rem] md:w-[15rem] md:h-[15rem]"
+            : "-bottom-10 left-0 md:-bottom-20 md:-left-20 w-[20rem] h-[20rem] md:w-[30rem] md:h-[30rem]"
         } rounded-full blur-3xl`}
         style={{
           background:

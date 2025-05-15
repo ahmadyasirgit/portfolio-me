@@ -57,8 +57,8 @@ const ParticlesBackground = () => {
             color: "#915EFF",
             distance: 150,
             enable: true,
-            opacity: 0.3,
-            width: 1,
+            opacity: 0.5,
+            width: 2,
           },
           collisions: {
             enable: true,
@@ -78,10 +78,10 @@ const ParticlesBackground = () => {
               enable: true,
               area: 800,
             },
-            value: 80,
+            value: 100,
           },
           opacity: {
-            value: 0.5,
+            value: 1,
           },
           shape: {
             type: "circle",

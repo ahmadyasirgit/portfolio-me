@@ -4,8 +4,7 @@ import { TypeAnimation } from 'react-type-animation';
 import { styles } from "../styles";
 import ParticlesBackground from "./canvas/Particles";
 
-const Hero = () => {
-  return (
+const Hero = () => {  return (
     <section className={`relative w-full h-screen mx-auto overflow-hidden`}>
       <ParticlesBackground />
       
@@ -250,20 +249,7 @@ const Hero = () => {
               className='w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-secondary mb-1 group-hover:bg-[#915EFF] transition-colors duration-300'
             />
           </div>
-          <motion.p 
-            className="text-center text-secondary mt-1 sm:mt-2 text-xs sm:text-sm opacity-70 group-hover:text-[#915EFF] transition-colors duration-300"
-            animate={{
-              y: [0, 5, 0],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              repeatType: "loop",
-              delay: 0.5
-            }}
-          >
-            Scroll down
-          </motion.p>
+
         </motion.a>
       </div>
     </section>

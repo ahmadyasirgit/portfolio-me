@@ -3,7 +3,6 @@ import Tilt from "react-parallax-tilt";
 import { motion, useAnimation } from "framer-motion";
 
 import { styles } from "../styles";
-import { github } from "../assets";
 import { SectionWrapper } from "../hoc";
 import { projects } from "../constants";
 import { fadeIn, textVariant } from "../utils/motion";
@@ -87,435 +86,245 @@ function useMousePosition() {
   return mousePosition;
 }
 
+// Update the ProjectCard component to use a website mockup design without hover animations
+
 const ProjectCard = ({
   index,
   name,
   description,
   tags,
-  image,
-  source_code_link,
   live_site_link,
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const [rotation, setRotation] = useState({ x: 0, y: 0 });
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  // Generate a unique color scheme based on project index
+  const colorSchemes = [
+    { primary: "#915EFF", secondary: "#BD78FF", accent: "#7451D4" }, // Purple theme
+    { primary: "#FF6B6B", secondary: "#FF9E9E", accent: "#D44A4A" }, // Red theme
+    { primary: "#4ECDC4", secondary: "#7EEEE7", accent: "#36A59F" }, // Teal theme
+    { primary: "#FFD166", secondary: "#FFDF8E", accent: "#D4A839" }, // Yellow theme
+    { primary: "#06D6A0", secondary: "#6DEFC6", accent: "#05AB7F" }, // Green theme
+  ];
   
-  // Card animation controls
-  const cardControls = useAnimation();
-  const imageControls = useAnimation();
-  const contentControls = useAnimation();
-  
-  useEffect(() => {
-    // Run entrance animation once
-    cardControls.start({
-      opacity: 1,
-      y: 0,
-      transition: { 
-        type: "spring", 
-        stiffness: 300, 
-        damping: 20, 
-        delay: index * 0.15 
-      }
-    });
-  }, [cardControls, index]);
-  
-  useEffect(() => {
-    // Update animations when hover state changes
-    if (isHovered) {
-      imageControls.start({ 
-        scale: 1.12,
-        filter: "brightness(1.1)",
-        transition: { duration: 0.8, ease: [0.23, 1, 0.32, 1] }
-      });
-      contentControls.start({ 
-        y: -5,
-        transition: { duration: 0.4, ease: "easeOut" }
-      });
-    } else {
-      imageControls.start({ 
-        scale: 1,
-        filter: "brightness(1)",
-        transition: { duration: 0.7, ease: [0.23, 1, 0.32, 1] }
-      });
-      contentControls.start({ 
-        y: 0,
-        transition: { duration: 0.4, ease: "easeOut" }
-      });
-    }
-  }, [isHovered, imageControls, contentControls]);
-
-  const handleMouseMove = (e) => {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    
-    // Get mouse position relative to card center
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    
-    // Calculate rotation values based on mouse position (max 12 degrees)
-    const rotateY = (x / (rect.width / 2)) * 12; 
-    const rotateX = -((y / (rect.height / 2)) * 12);
-    
-    // Set the relative mouse position for spotlight effect
-    setMousePosition({ x, y });
-    setRotation({ x: rotateX, y: rotateY });
-  };
+  const colors = colorSchemes[index % colorSchemes.length];
 
   return (
     <motion.div 
       variants={fadeIn("up", "spring", index * 0.2, 0.75)}
-      className="relative"
+      className="sm:w-[360px] w-full"
       initial={{ opacity: 0, y: 50 }}
-      animate={cardControls}
-      whileHover={{ z: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ 
+        type: "spring", 
+        stiffness: 300, 
+        damping: 20, 
+        delay: index * 0.15 
+      }}
     >
-      <Tilt
-        tiltMaxAngleX={12}
-        tiltMaxAngleY={12}
-        tiltReverse={false}
-        glareEnable={true}
-        glareMaxOpacity={0.25}
-        glareColor="#ffffff"
-        glarePosition="all"
-        glareBorderRadius="20px"
-        tiltAngleXManual={rotation.x}
-        tiltAngleYManual={rotation.y}
-        scale={1.05}
-        transitionSpeed={1500}
-        perspective={1000}
-        className="bg-tertiary p-5 rounded-2xl sm:w-[360px] w-full shadow-card transition-all duration-500 group border border-slate-800/80 hover:border-[#915EFF]/70 cursor-pointer relative overflow-hidden"
-        onMouseMove={handleMouseMove}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => {
-          setIsHovered(false);
-          setRotation({ x: 0, y: 0 });
-        }}
-        style={{
-          transformStyle: "preserve-3d",
-          boxShadow: isHovered 
-            ? "0 25px 50px -12px rgba(92, 50, 205, 0.35), 0 0 25px rgba(145, 94, 255, 0.15) inset"
-            : "0 10px 30px -15px rgba(0, 0, 0, 0.5)",
-          transition: "box-shadow 0.6s cubic-bezier(0.23, 1, 0.32, 1), transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), border-color 0.6s cubic-bezier(0.23, 1, 0.32, 1)",
-        }}
+      <div 
+        className="bg-tertiary p-5 rounded-2xl w-full shadow-card border border-slate-800/80 overflow-hidden"
       >
-        {/* Magic Sparkles - appears only on hover */}
-        {isHovered && (
-          <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 5 }}>
-            {[...Array(8)].map((_, i) => (
-              <motion.div
-                key={`sparkle-${i}`}
-                className="absolute w-1.5 h-1.5 rounded-full bg-white opacity-70"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  boxShadow: "0 0 8px 2px rgba(255, 255, 255, 0.3)",
-                }}
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ 
-                  scale: [0, 1, 0],
-                  opacity: [0, 0.8, 0],
-                }}
-                transition={{ 
-                  duration: 1.5,
-                  delay: Math.random() * 1,
-                  repeat: Infinity,
-                  repeatDelay: Math.random() * 3
-                }}
-              />
-            ))}
-          </div>
-        )}
-        
-        {/* Background particle effect */}
-        <div className="absolute inset-0 -z-10 overflow-hidden rounded-2xl">
-          {isHovered && [...Array(6)].map((_, i) => (
-            <motion.div
-              key={`particle-${i}`}
-              className="absolute w-1.5 h-1.5 rounded-full bg-[#915EFF]"
-              initial={{ 
-                x: mousePosition.x || 0, 
-                y: mousePosition.y || 0,
-                opacity: 0.8,
-                scale: 0.2,
-              }}
-              animate={{ 
-                x: mousePosition.x + (Math.random() * 120 - 60),
-                y: mousePosition.y + (Math.random() * 120 - 60),
-                opacity: 0,
-                scale: 0,
-              }}
-              transition={{ 
-                duration: Math.random() * 1.2 + 0.7, 
-                ease: "easeOut"
-              }}
-            />
-          ))}
-        </div>
-        
-        {/* Advanced glow effect with gradient and depth */}
-        <motion.div 
-          className="absolute -inset-0.5 rounded-2xl opacity-0 group-hover:opacity-100 group-hover:blur-md bg-gradient-to-br from-purple-600/20 via-indigo-600/10 to-blue-500/20 -z-10"
-          animate={isHovered ? { 
-            opacity: 1,
-            rotateZ: [0, 2, 0, -2, 0],
-            scale: [0.98, 1.01, 0.98],
-            transition: { duration: 5, repeat: Infinity }
-          } : { opacity: 0 }}
-          style={{ transform: "translateZ(-40px)" }}
-        />
-        
-        {/* Dynamic spotlight based on mouse position */}
-        {isHovered && (
-          <motion.div
-            className="absolute inset-0 rounded-2xl overflow-hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              className="absolute w-[250px] h-[250px] rounded-full"
-              style={{
-                background: "radial-gradient(circle, rgba(145, 94, 255, 0.18) 0%, transparent 70%)",
-                left: mousePosition.x + "px",
-                top: mousePosition.y + "px",
-                transform: "translate(-50%, -50%) translateZ(10px)",
-              }}
-            />
-          </motion.div>
-        )}
-        
-        {/* Multi-layered shine effect with staggered animations */}
-        {isHovered && (
-          <motion.div 
-            className="absolute inset-0 overflow-hidden rounded-2xl" 
-            style={{ zIndex: 1 }}
-          >
-            <motion.div
-              className="absolute w-40 h-[300%] bg-gradient-to-b from-transparent via-white/10 to-transparent rotate-[35deg]"
-              animate={{ 
-                left: ['-100%', '200%'],
-              }}
-              transition={{ 
-                duration: 1.5, 
-                ease: "easeInOut",
-              }}
-            />
+        {/* Website Mockup Design */}
+        <div className="w-full h-[230px] rounded-xl overflow-hidden bg-black/80 relative">
+          {/* Browser Window Frame */}
+          <div className="w-full h-8 bg-[#2D2D3A] flex items-center px-2 rounded-t-lg border-b border-gray-800">
+            {/* Browser Controls */}
+            <div className="flex gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+            </div>
             
-            <motion.div
-              className="absolute w-20 h-[300%] bg-gradient-to-b from-transparent via-white/5 to-transparent rotate-[35deg]"
-              animate={{ 
-                left: ['-100%', '200%'],
-              }}
-              transition={{ 
-                duration: 1.5, 
-                delay: 0.2,
-                ease: "easeInOut",
-              }}
-            />
-          </motion.div>
-        )}
-        
-        {/* Project image container with 3D effect */}
-        <div 
-          className="relative w-full h-[230px] overflow-hidden rounded-xl" 
-          style={{ transform: "translateZ(60px)" }}
-        >
-          {/* Image overlay gradient - dynamic opacity based on hover */}
-          <motion.div 
-            className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 z-10"
-            animate={{ opacity: isHovered ? 0.4 : 0.7 }}
-            transition={{ duration: 0.5 }}
-          />
-          
-          {/* Project image with hover zoom and better quality */}
-          <motion.img
-            src={image}
-            alt={name}
-            className="w-full h-full object-cover rounded-xl"
-            style={{ 
-              objectFit: "cover",
-              imageRendering: "high-quality",
-            }}
-            animate={imageControls}
-            initial={{ scale: 1 }}
-          />
-
-          {/* Floating project number badge */}
-          <motion.div 
-            className="absolute top-3 left-3 z-20 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-full border border-[#915EFF]/30"
-            style={{ transform: "translateZ(80px)" }}
-            animate={isHovered ? {
-              y: [0, -2, 0],
-              boxShadow: "0 0 12px rgba(145, 94, 255, 0.4)",
-              borderColor: "rgba(145, 94, 255, 0.6)",
-            } : {
-              boxShadow: "0 0 0 rgba(145, 94, 255, 0)",
-              borderColor: "rgba(145, 94, 255, 0.3)",
-            }}
-            transition={{ duration: 1, repeat: isHovered ? Infinity : 0 }}
-          >
-            <span className="text-[#915EFF] font-bold text-sm">
-              {index + 1 < 10 ? `0${index + 1}` : index + 1}
-            </span>
-          </motion.div>
-
-          {/* Project links - improved with staggered animations */}
-          <div className="absolute inset-0 flex justify-end m-3 card-img_hover z-20">
-            {source_code_link && (
-              <motion.div
-                onClick={() => window.open(source_code_link, "_blank")}
-                className="black-gradient w-10 h-10 rounded-full flex justify-center items-center cursor-pointer mr-2 backdrop-blur-sm border border-white/10"
-                style={{ transform: "translateZ(80px)" }}
-                whileHover={{ 
-                  scale: 1.2,
-                  boxShadow: "0 0 20px rgba(145, 94, 255, 0.5)",
-                  borderColor: "#915EFF",
-                }}
-                animate={isHovered ? { 
-                  y: [0, -5],
-                  transition: { duration: 0.3, delay: 0.1 }
-                } : { 
-                  y: 0,
-                  transition: { duration: 0.3 }
-                }}
-              >
-                <img
-                  src={github}
-                  alt="source code"
-                  className="w-1/2 h-1/2 object-contain"
-                />
-              </motion.div>
-            )}
-            {live_site_link && (
-              <motion.div
-                onClick={() => window.open(live_site_link, "_blank")}
-                className="black-gradient w-10 h-10 rounded-full flex justify-center items-center cursor-pointer backdrop-blur-sm border border-white/10"
-                style={{ transform: "translateZ(80px)" }}
-                whileHover={{ 
-                  scale: 1.2,
-                  boxShadow: "0 0 20px rgba(145, 94, 255, 0.5)",
-                  borderColor: "#915EFF",
-                }}
-                animate={isHovered ? { 
-                  y: [0, -5],
-                  transition: { duration: 0.3, delay: 0.2 }
-                } : { 
-                  y: 0,
-                  transition: { duration: 0.3 }
-                }}
-              >
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  className="w-1/2 h-1/2 object-contain" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" 
-                  />
-                </svg>
-              </motion.div>
-            )}
+            {/* Page Title */}
+            <div className="flex-1 text-center text-xs font-medium text-gray-300 truncate px-4">
+              {name}
+            </div>
+            
+            {/* External Link Button */}
+            <a 
+              href={live_site_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-5 h-5 flex items-center justify-center text-gray-300 hover:text-white"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
           </div>
-        </div>
+          
+          {/* Website Content */}
+          <div className="h-[calc(230px-32px)] bg-[#1A1A2E] relative overflow-hidden">
+            {/* Project Logo/Header */}
+            <div 
+              className="w-full h-16 flex items-center justify-center"
+              style={{ backgroundColor: `${colors.primary}20` }}
+            >
+              <div 
+                className="w-10 h-10 rounded-md flex items-center justify-center"
+                style={{ backgroundColor: colors.primary }}
+              >
+                <span className="text-white font-bold text-xl">
+                  {name.charAt(0)}
+                </span>
+              </div>
+              
+              <span 
+                className="ml-3 font-bold tracking-wide"
+                style={{ color: colors.primary }}
+              >
+                {name.split(' ')[0]}
+              </span>
+            </div>
 
-        {/* Project title and description with 3D effect and hover animation */}
-        <motion.div 
-          className="mt-5 relative z-10"
-          style={{ transform: "translateZ(50px)" }}
-          animate={contentControls}
-          initial={{ y: 0 }}
-        >
-          <motion.h3 
-            className="text-white font-bold text-[24px] leading-tight"
-            animate={isHovered ? { 
-              color: "#915EFF",
-              textShadow: "0 0 8px rgba(145, 94, 255, 0.3)",
-            } : { 
-              color: "#ffffff",
-              textShadow: "none",
-            }}
-            transition={{ duration: 0.3 }}
-          >
-            {name}
-          </motion.h3>
-          <motion.p 
-            className="mt-2 text-secondary text-[14px] leading-relaxed min-h-[80px] backdrop-blur-[1px] rounded-md"
-            animate={isHovered ? { opacity: 0.95 } : { opacity: 0.8 }}
-          >
-            {description}
-          </motion.p>
-        </motion.div>
+            {/* Fake Browser URL Bar */}
+            <div className="w-full h-8 border-y border-gray-800 bg-[#20203A] flex items-center px-3">
+              <div className="flex-1 bg-[#2D2D3A] h-5 rounded-md flex items-center px-2 text-xs text-gray-400">
+                <span className="mr-2 text-gray-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
+                    <path fillRule="evenodd" d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z" clipRule="evenodd" />
+                  </svg>
+                </span>
+                <span className="truncate">{`${name.toLowerCase().split(' ').join('')}.com`}</span>
+              </div>
+              <div className="ml-2 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                  <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clipRule="evenodd" />
+                </svg>
+              </div>
+            </div>
 
-        {/* Project tags with staggered animation */}
-        <motion.div 
-          className="mt-4 flex flex-wrap gap-2 relative z-10"
-          style={{ transform: "translateZ(40px)" }}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-        >
-          {tags.map((tag, tagIndex) => (
-            <motion.span
-              key={`${name}-${tag.name}`}
-              className={`text-[14px] ${tag.color} bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-full border border-[#915EFF]/10`}
-              whileHover={{ 
-                scale: 1.1, 
-                backgroundColor: "rgba(145, 94, 255, 0.2)",
-                border: "1px solid rgba(145, 94, 255, 0.4)",
-                y: -2,
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)"
-              }}
-              initial={{ opacity: 0, scale: 0.8, y: 10 }}
-              animate={isHovered ? { 
-                opacity: 1, 
-                scale: 1, 
-                y: 0,
-                transition: { delay: 0.1 + (tagIndex * 0.05) }
-              } : { 
-                opacity: 1, 
-                scale: 1, 
-                y: 0 
+            {/* Navigation Bar */}
+            <div className="w-full h-8 bg-[#25253A] flex items-center justify-center gap-4 px-4">
+              {['Home', 'Menu', 'Order', 'Contact'].map((item, i) => (
+                <div 
+                  key={i} 
+                  className="text-xs px-2 py-1 rounded"
+                  style={{ 
+                    backgroundColor: i === 0 ? `${colors.primary}30` : 'transparent',
+                    color: i === 0 ? colors.primary : '#999'
+                  }}
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+            
+            {/* Content Area */}
+            <div className="p-3 flex flex-col">
+              {/* Content Section */}
+              <div className="flex mb-2">
+                {/* Left Column */}
+                <div className="w-1/3 pr-2">
+                  <div 
+                    className="h-24 w-full rounded mb-2"
+                    style={{ backgroundColor: `${colors.primary}30` }}
+                  >
+                    <div className="h-full w-full flex items-center justify-center">
+                      <div 
+                        className="w-12 h-12 rounded-full"
+                        style={{ backgroundColor: colors.primary }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div 
+                    className="h-3 w-full rounded-full mb-1.5"
+                    style={{ backgroundColor: `${colors.secondary}30` }}
+                  ></div>
+                  <div 
+                    className="h-2 w-3/4 rounded-full"
+                    style={{ backgroundColor: `${colors.secondary}20` }}
+                  ></div>
+                </div>
+                
+                {/* Right Column */}
+                <div className="w-2/3 pl-2">
+                  <div 
+                    className="h-4 w-3/4 rounded-full mb-2"
+                    style={{ backgroundColor: `${colors.secondary}40` }}
+                  ></div>
+                  <div 
+                    className="h-2 w-full rounded-full mb-1.5"
+                    style={{ backgroundColor: `${colors.secondary}20` }}
+                  ></div>
+                  <div 
+                    className="h-2 w-full rounded-full mb-1.5"
+                    style={{ backgroundColor: `${colors.secondary}20` }}
+                  ></div>
+                  <div 
+                    className="h-2 w-4/5 rounded-full mb-3"
+                    style={{ backgroundColor: `${colors.secondary}20` }}
+                  ></div>
+                  
+                  {/* Button */}
+                  <div 
+                    className="h-6 w-24 rounded-md flex items-center justify-center"
+                    style={{ backgroundColor: colors.primary }}
+                  >
+                    <div className="h-1.5 w-12 bg-white/80 rounded-full"></div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Bottom Elements */}
+              <div className="mt-auto flex justify-between items-end">
+                {/* Bottom Left */}
+                <div className="flex items-center">
+                  <div 
+                    className="w-5 h-5 rounded mr-1.5"
+                    style={{ backgroundColor: `${colors.primary}60` }}
+                  ></div>
+                  <div className="space-y-1">
+                    <div 
+                      className="h-1.5 w-12 rounded-full"
+                      style={{ backgroundColor: `${colors.secondary}30` }}
+                    ></div>
+                    <div 
+                      className="h-1.5 w-8 rounded-full"
+                      style={{ backgroundColor: `${colors.secondary}20` }}
+                    ></div>
+                  </div>
+                </div>
+                
+                {/* URL Bar */}
+                <div 
+                  className="py-0.5 px-2 rounded bg-[#2D2D3A] text-[9px] text-gray-400 flex items-center"
+                >
+                  <span className="w-2 h-2 rounded-full mr-1" style={{ backgroundColor: colors.primary }}></span>
+                  <span>{name.toLowerCase().split(' ').join('')}.co.uk/</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Live Site Tag */}
+            <div 
+              className="absolute top-2 right-2 px-2 py-0.5 rounded text-[10px] font-medium"
+              style={{ 
+                backgroundColor: colors.primary,
+                color: 'white'
               }}
             >
+              Live Site
+            </div>
+          </div>
+        </div>
+
+        {/* Project Info */}
+        <div className="mt-5">
+          <h3 className="text-white font-bold text-[24px]">{name}</h3>
+          <p className="mt-2 text-secondary text-[14px]">{description}</p>
+        </div>
+
+        {/* Project Tags */}
+        <div className="mt-4 flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <p
+              key={`${name}-${tag.name}`}
+              className={`text-[14px] ${tag.color}`}
+            >
               #{tag.name}
-            </motion.span>
+            </p>
           ))}
-        </motion.div>
-        
-        {/* Cosmic flare effect - only visible on hover */}
-        {isHovered && (
-          <motion.div
-            className="absolute -top-20 -right-20 w-40 h-40 opacity-30 pointer-events-none"
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ 
-              opacity: 0.3, 
-              scale: 1,
-              rotate: [0, 15],
-            }}
-            transition={{ 
-              duration: 0.8,
-              ease: "easeOut"
-            }}
-            style={{ zIndex: 1 }}
-          >
-            <svg width="100%" height="100%" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-              <path fill="#915EFF" d="M38.5,-66.2C50.5,-58.9,61.2,-49.8,68.1,-38.1C75,-26.4,78.1,-12.2,79.3,3C80.5,18.2,79.8,35.4,71.5,47.5C63.3,59.5,47.3,66.4,31.9,73.2C16.4,79.9,1.4,86.5,-12.4,84.6C-26.3,82.7,-39.1,72.4,-50.8,61.6C-62.5,50.8,-73.2,39.4,-76.1,26.2C-79,12.9,-74.2,-2.3,-69.4,-16.5C-64.7,-30.7,-60,-44,-50.3,-52.2C-40.6,-60.4,-25.9,-63.4,-11.6,-68.8C2.8,-74.1,17.2,-82,28.9,-78.6C40.7,-75.3,49.8,-60.8,49.9,-46.3C50.1,-31.8,41.3,-17.2,42.3,-2.8L47.3,16.5L52.3,35.7" transform="translate(100 100)" />
-            </svg>
-          </motion.div>
-        )}
-        
-        {/* Inner card edge highlight for 3D effect */}
-        <motion.div
-          className="absolute inset-0 rounded-2xl pointer-events-none border border-white/5"
-          style={{ transform: "translateZ(70px)" }}
-          animate={isHovered ? { opacity: 1 } : { opacity: 0 }}
-        />
-      </Tilt>
+        </div>
+      </div>
     </motion.div>
   );
 };
@@ -536,7 +345,7 @@ const Works = () => {
   return (
     <div className="relative min-h-screen overflow-hidden py-10">
       {/* Cosmic/Starry background */}
-      <StarryBackground />
+      
       
       {/* Custom cursor spotlight */}
       {showCursor && (
@@ -602,11 +411,11 @@ const Works = () => {
           initial="hidden"
           whileInView="show"
         >
-          <span className="text-[#BD78FF] font-medium">Transforming ideas into digital reality.</span> Following projects showcase my expertise in modern web development, 
-          particularly in the restaurant industry. I've built payment systems, 
-          reservation platforms, and admin interfaces that have significantly 
-          improved business operations. My work demonstrates my ability to develop 
-          full-stack solutions using React, Node.js, TypeScript, and other technologies.
+          <span className="text-[#BD78FF] font-medium">Transforming culinary experiences into digital reality.</span> The following projects showcase my expertise in developing modern web solutions specifically for the restaurant industry. From centralized brand hubs to online ordering systems and reservation platforms, I've built complete digital ecosystems that have significantly improved business operations and customer engagement.
+          
+          <span className="block mt-2">
+            My portfolio demonstrates the ability to create full-stack solutions using React, TypeScript, Tailwind CSS, and payment integrations that combine appealing design with powerful functionality.
+          </span>
           
           <motion.span
             className="block mt-4 italic text-slate-400 text-[15px]"
@@ -614,7 +423,7 @@ const Works = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8, duration: 0.5 }}
           >
-            Click on the icons to view live sites and source code repositories.
+            Click on the icons to view live sites and explore these restaurant platforms.
           </motion.span>
         </motion.p>
       </div>

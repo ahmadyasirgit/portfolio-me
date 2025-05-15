@@ -259,7 +259,7 @@ const About = () => {
             className="bg-gradient-to-r from-violet-600 to-purple-600 px-4 py-1 text-sm rounded-md text-white shadow-md cursor-default relative overflow-hidden mt-2"
             whileHover={{ scale: 1.05 }}
           >
-            <span className="relative z-10">BSc Software Engineering</span>
+            <span className="relative z-10">BS Computer Sciences.</span>
             <motion.div 
               className="absolute inset-0 bg-gradient-to-r from-pink-500 to-violet-500 opacity-0"
               animate={{ opacity: [0, 0.5, 0] }}
@@ -277,8 +277,8 @@ const About = () => {
       >
         <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-purple-900/10 via-transparent to-pink-900/10 animate-gradient-slow" />
         
-        <div className="flex mb-6 border-b border-gray-700 relative z-10 overflow-x-auto scrollbar-hide">
-          {["bio", "skills", "education"].map((tab) => (
+        <div className="flex mb-6 border-b border-gray-700 relative z-10 overflow-x-auto scrollbar-hide justify-center">
+          {["bio", "skills"].map((tab) => (
             <button 
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -364,38 +364,6 @@ const About = () => {
             </motion.div>
           )}
           
-          {activeTab === "education" && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="space-y-2 pt-2 sm:pt-4 overflow-y-auto max-h-[350px] sm:max-h-[400px] pr-2 custom-scrollbar"
-            >
-              <TimelineItem 
-                year="2019 - 2023"
-                title="BSc Software Engineering"
-                description="University of Example • Focus on full-stack development, software architecture, and agile methodologies."
-                color="text-[#915EFF]"
-                delay={0.1}
-              />
-              
-              <TimelineItem 
-                year="2018"
-                title="Web Development Bootcamp"
-                description="Code Academy • Intensive training in modern web technologies and best practices."
-                color="text-green-500"
-                delay={0.3}
-              />
-              
-              <TimelineItem 
-                year="2017"
-                title="UI/UX Design Fundamentals"
-                description="Design Institute • Learned principles of user-centered design and interactive prototyping."
-                color="text-blue-400"
-                delay={0.5}
-              />
-            </motion.div>
-          )}
         </div>
       </motion.div>
 

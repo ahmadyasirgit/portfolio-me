@@ -66,13 +66,12 @@ const ExperienceCard = ({ experience, index, position = 'left' }) => {
       ref={ref}
       initial="hidden"
       animate={controls}
-      variants={cardVariants}
-      className={`relative ${position === 'right' ? 'md:pl-4' : 'md:pr-4'}`}
+      variants={cardVariants}      className={`relative ${position === 'right' ? 'md:pl-4' : 'md:pr-4'}`}
       style={{
         perspective: "1000px"
       }}
     >
-      {/* Custom SVG Filter for neon glow effect */}
+      <div className="overflow-hidden rounded-2xl">{/* Custom SVG Filter for neon glow effect */}
       <svg width="0" height="0" className="absolute">
         <filter id={`neonGlow-${index}`}>
           <feGaussianBlur stdDeviation="3" result="blur" />
@@ -91,7 +90,7 @@ const ExperienceCard = ({ experience, index, position = 'left' }) => {
           <stop offset="100%" stopColor="#7A49D8" stopOpacity="0.3" />
         </linearGradient>
       </svg>
-
+</div>
       <div 
         className={`group rounded-2xl overflow-hidden backdrop-blur-sm bg-[#1d1836]/80 border border-[#915EFF]/20 p-6 hover:border-[#915EFF]/40 transition-all duration-500 transform hover:scale-[1.02] hover:shadow-[0_10px_40px_-15px_rgba(145,94,255,0.3)]`}
         onMouseEnter={() => setIsHovered(true)}
@@ -117,11 +116,10 @@ const ExperienceCard = ({ experience, index, position = 'left' }) => {
             </defs>
           </svg>
         </div>
-        
-        <div className="relative overflow-hidden z-10">
+          <div className="relative overflow-hidden z-10">
           {/* Decorative orbs */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#915EFF] opacity-5 rounded-full blur-[60px] -mr-10 -mt-10" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#6E44FF] opacity-5 rounded-full blur-[40px] -ml-10 -mb-5" />
+          <div className="absolute top-0 right-0 w-28 sm:w-32 h-28 sm:h-32 bg-[#915EFF] opacity-5 rounded-full blur-[60px] -mr-5 sm:-mr-10 -mt-5 sm:-mt-10" />
+          <div className="absolute bottom-0 left-0 w-20 sm:w-24 h-20 sm:h-24 bg-[#6E44FF] opacity-5 rounded-full blur-[40px] -ml-5 sm:-ml-10 -mb-3 sm:-mb-5" />
           
           <motion.h3 
             className="text-white text-[22px] sm:text-[26px] font-bold flex items-center"
@@ -199,7 +197,7 @@ const ExperienceCard = ({ experience, index, position = 'left' }) => {
             />
             
             <ul className="mt-3 space-y-2 list-none ml-1">
-              {experience.points.slice(0, 2).map((point, idx) => (
+              {experience.points.map((point, idx) => (
                 <motion.li
                   key={`experience-point-${idx}`}
                   className="text-gray-300 text-[14px] pl-1 tracking-wide flex items-start"
@@ -259,6 +257,7 @@ const ExperienceCard = ({ experience, index, position = 'left' }) => {
         </div>
       </div>
     </motion.div>
+    
   );
 };
 
@@ -305,14 +304,13 @@ const Experience = () => {
       controls.start("visible");
     }
   }, [controls, inView]);
-  
-  return (
-    <div ref={sectionRef} className="relative py-10">
+    return (
+    <div ref={sectionRef} className="relative py-10 overflow-hidden">
       {/* Artistic background elements */}
       <PatternBackground />
       
       <motion.div 
-        className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full"
+        className="absolute top-0 right-0 sm:-mr-20 sm:-mt-20 -mr-10 -mt-10 w-60 sm:w-80 h-60 sm:h-80 rounded-full"
         style={{ 
           background: "radial-gradient(circle, rgba(145,94,255,0.1) 0%, rgba(145,94,255,0) 70%)",
           y,
@@ -321,7 +319,7 @@ const Experience = () => {
       />
 
       <motion.div 
-        className="absolute bottom-0 left-0 -ml-20 -mb-20 w-72 h-72 rounded-full"
+        className="absolute bottom-0 left-0 sm:-ml-20 sm:-mb-20 -ml-10 -mb-10 w-60 sm:w-72 h-60 sm:h-72 rounded-full"
         style={{ 
           background: "radial-gradient(circle, rgba(110,68,255,0.1) 0%, rgba(110,68,255,0) 70%)",
           y: useTransform(scrollYProgress, [0, 1], [0, 50]),
@@ -380,17 +378,15 @@ const Experience = () => {
             style={{ 
               background: "linear-gradient(90deg, transparent, rgba(145, 94, 255, 0.8), transparent)",
               transformOrigin: "left"
-            }}
-          />
+            }}          />
           
           {/* Decorative sparkling elements */}
-          <div className="absolute -top-6 -right-6 w-12 h-12 opacity-70">
+          <div className="absolute -top-6 right-0 sm:-right-6 w-10 sm:w-12 h-10 sm:h-12 opacity-70">
             <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
               <path fill="#915EFF" d="M40.8,-68.7C54.3,-62.8,67.7,-54.3,76.4,-42.1C85.2,-29.9,89.1,-14.9,86.8,-1.3C84.5,12.3,75.9,24.6,67.1,35.9C58.3,47.1,49.3,57.4,38.1,64.4C26.9,71.5,13.4,75.3,-0.2,75.6C-13.8,75.9,-27.5,72.6,-39.9,66.1C-52.2,59.6,-63.1,49.9,-69.3,37.7C-75.5,25.5,-77.1,10.9,-76.7,-3.6C-76.3,-18.1,-74.1,-32.7,-66.9,-44.6C-59.8,-56.5,-47.8,-65.7,-34.8,-71.8C-21.8,-77.9,-8.7,-80.9,3.4,-86.6C15.5,-92.3,31,-91.5,40.8,-83.1C50.6,-74.6,54.6,-58.3,40.8,-68.7Z" transform="translate(100 100) scale(0.4)" />
             </svg>
           </div>
-          
-          <div className="absolute -bottom-8 -left-4 w-8 h-8 opacity-70">
+            <div className="absolute -bottom-8 left-0 sm:-left-4 w-6 sm:w-8 h-6 sm:h-8 opacity-70">
             <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
               <path fill="#6E44FF" d="M47.7,-73.2C62.1,-66.3,74.5,-54.6,79.1,-40.5C83.7,-26.5,80.5,-10.1,76.5,4.6C72.6,19.3,67.9,32.3,59.8,43.9C51.7,55.4,40,65.4,26.9,69.7C13.8,74,0.3,72.5,-14.3,70.5C-28.9,68.5,-44.5,66,-55.3,57.2C-66.1,48.4,-72,33.4,-76.5,17.8C-81,2.3,-84.1,-13.9,-79.1,-27.1C-74,-40.2,-60.8,-50.4,-46.8,-57.3C-32.8,-64.2,-17.7,-67.8,-1.3,-65.8C15,-63.9,33.3,-56.6,47.7,-47.4C62.1,-38.3,74.5,-27.3,74.5,-16.2L74.4,-16.1C74.4,-5,62.1,6.2,47.7,-73.2Z" transform="translate(100 100) scale(0.3)" />
             </svg>
@@ -700,59 +696,6 @@ const Experience = () => {
             ))}
           </div>
         </div>
-
-        <motion.div 
-          className="text-center mt-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          viewport={{ once: true, margin: "-100px" }}
-        >
-          <motion.a 
-            href="/resume.pdf" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-flex items-center relative px-7 py-3 overflow-hidden group cursor-pointer"
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            {/* Button background with animated gradient */}
-            <motion.span 
-              className="absolute inset-0 rounded-full"
-              style={{
-                background: "linear-gradient(45deg, #915EFF, #7A49D8, #6E44FF, #915EFF)",
-                backgroundSize: "400% 400%",
-                boxShadow: "0 6px 20px rgba(145, 94, 255, 0.3)"
-              }}
-              animate={{ 
-                backgroundPosition: ["0% 0%", "100% 100%"]
-              }}
-              transition={{ 
-                duration: 3, 
-                ease: "linear", 
-                repeat: Infinity,
-                repeatType: "mirror"
-              }}
-            />
-            
-            {/* Button content with icon */}
-            <span className="relative z-10 flex items-center text-white font-medium">
-              <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 10V16M12 16L9 13M12 16L15 13M17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H12.5858C12.851 3 13.1054 3.10536 13.2929 3.29289L18.7071 8.70711C18.8946 8.89464 19 9.149 19 9.41421V19C19 20.1046 18.1046 21 17 21Z" 
-                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              Download Full Resume
-              
-              {/* Circular shine animation */}
-              <motion.span 
-                className="absolute inset-0 rounded-full bg-white opacity-20"
-                initial={{ scale: 0 }}
-                whileHover={{ scale: 3, opacity: 0 }}
-                transition={{ duration: 1 }}
-              />
-            </span>
-          </motion.a>
-        </motion.div>
       </motion.div>
     </div>
   );

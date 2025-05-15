@@ -1,11 +1,75 @@
-import React, { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import React, { useRef, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import emailjs from "@emailjs/browser";
 
 import { styles } from "../styles";
 import { EarthCanvas } from "./canvas";
 import { SectionWrapper } from "../hoc";
 import { slideIn } from "../utils/motion";
+
+// Custom Alert Component
+const CustomAlert = ({ type, message, isVisible, onClose }) => {
+  useEffect(() => {
+    if (isVisible) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 5000); // Auto close after 5 seconds
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible, onClose]);
+
+  const alertStyles = {
+    success: {
+      bg: "bg-green-500/10",
+      border: "border-green-500/50",
+      icon: (
+        <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      )
+    },
+    error: {
+      bg: "bg-red-500/10",
+      border: "border-red-500/50",
+      icon: (
+        <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      )
+    }
+  };
+
+  const style = alertStyles[type];
+
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+          className={`fixed top-6 right-6 max-w-md z-50 ${style.bg} backdrop-blur-md border ${style.border} p-4 rounded-lg shadow-xl flex items-start gap-3`}
+        >
+          <div className="flex-shrink-0">{style.icon}</div>
+          <div className="flex-1 text-white">
+            <h4 className="font-medium text-lg">{type === "success" ? "Success" : "Error"}</h4>
+            <p className="text-white/80">{message}</p>
+          </div>
+          <button 
+            onClick={onClose}
+            className="text-white/50 hover:text-white"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 const Contact = () => {
   const formRef = useRef();
@@ -16,6 +80,42 @@ const Contact = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [alert, setAlert] = useState({
+    show: false,
+    type: "",
+    message: ""
+  });
+
+  // Form validation function
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Name validation
+    if (!form.name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (form.name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters";
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!form.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(form.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+    
+    // Message validation
+    if (!form.message.trim()) {
+      newErrors.message = "Message is required";
+    } else if (form.message.trim().length < 10) {
+      newErrors.message = "Message must be at least 10 characters";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (e) => {
     const { target } = e;
@@ -25,9 +125,29 @@ const Contact = () => {
       ...form,
       [name]: value,
     });
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: ""
+      });
+    }
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Validate form before submission
+    if (!validateForm()) {
+      setAlert({
+        show: true,
+        type: "error",
+        message: "Please fix the errors in the form"
+      });
+      return;
+    }
+    
     setLoading(true);
 
     emailjs
@@ -46,7 +166,13 @@ const Contact = () => {
       .then(
         () => {
           setLoading(false);
-          alert("Thank you. I will get back to you as soon as possible.");
+          
+          // Show success alert
+          setAlert({
+            show: true,
+            type: "success",
+            message: "Thank you for your message. I'll get back to you as soon as possible!"
+          });
 
           setForm({
             name: "",
@@ -57,19 +183,41 @@ const Contact = () => {
         (error) => {
           setLoading(false);
           console.error(error);
-
-          alert("Ahh, something went wrong. Please try again.");
+          
+          // Show error alert
+          setAlert({
+            show: true,
+            type: "error",
+            message: "Something went wrong. Please try again later."
+          });
         }
       );
+  };
+
+  const hideAlert = () => {
+    setAlert({
+      ...alert,
+      show: false
+    });
   };
 
   return (
     <div
       className={`xl:mt-12 flex xl:flex-row flex-col-reverse gap-10 overflow-hidden`}
-    >      <motion.div
+    >
+      {/* Custom Alert Component */}
+      <CustomAlert
+        type={alert.type}
+        message={alert.message}
+        isVisible={alert.show}
+        onClose={hideAlert}
+      />
+
+      <motion.div
         variants={slideIn("left", "tween", 0.2, 1)}
         className='flex-[0.75] bg-black-100 p-8 rounded-2xl shadow-xl hover:shadow-purple-500/20 transition-shadow duration-500'
-      >        <p className={styles.sectionSubText}>Get in touch</p>
+      >
+        <p className={styles.sectionSubText}>Get in touch</p>
         <h3 className={`${styles.sectionHeadText} relative inline-block`}>
           <span className="text-[#915EFF]">Contact.</span>
           <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-[#915EFF] to-transparent"></span>
@@ -97,56 +245,109 @@ const Contact = () => {
           ref={formRef}
           onSubmit={handleSubmit}
           className='mt-12 flex flex-col gap-8'
+          noValidate
         >
-          <label className='flex flex-col'>
-            <span className='text-white font-medium mb-4'>Your Name</span>
-            <input
-              type='text'
-              name='name'
-              value={form.name}
-              onChange={handleChange}              placeholder="What's your name?"
-              className='bg-tertiary py-4 px-6 placeholder:text-secondary text-white rounded-lg outline-none border-none font-medium'
-            />
-          </label>
-          <label className='flex flex-col'>
-            <span className='text-white font-medium mb-4'>Your email</span>
-            <input
-              type='email'
-              name='email'
-              value={form.email}
-              onChange={handleChange}              placeholder="What's your email address?"
-              className='bg-tertiary py-4 px-6 placeholder:text-secondary text-white rounded-lg outline-none border-none font-medium'
-            />
-          </label>
-          <label className='flex flex-col'>
-            <span className='text-white font-medium mb-4'>Your Message</span>
-            <textarea
-              rows={7}
-              name='message'
-              value={form.message}
-              onChange={handleChange}              placeholder="How can I help you?"
-              className='bg-tertiary py-4 px-6 placeholder:text-secondary text-white rounded-lg outline-none border-none font-medium'
-            />
-          </label>          <button
+          <div className="relative">
+            <label className='flex flex-col'>
+              <span className='text-white font-medium mb-4'>Your Name</span>
+              <input
+                type='text'
+                name='name'
+                value={form.name}
+                onChange={handleChange}
+                placeholder="What's your name?"
+                className={`bg-tertiary py-4 px-6 placeholder:text-secondary text-white rounded-lg outline-none border ${errors.name ? 'border-red-500' : 'border-transparent'} font-medium transition-all duration-300 focus:border-[#915EFF]`}
+              />
+            </label>
+            {errors.name && (
+              <motion.p 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-red-500 text-sm mt-2 ml-1"
+              >
+                {errors.name}
+              </motion.p>
+            )}
+          </div>
+          
+          <div className="relative">
+            <label className='flex flex-col'>
+              <span className='text-white font-medium mb-4'>Your email</span>
+              <input
+                type='email'
+                name='email'
+                value={form.email}
+                onChange={handleChange}
+                placeholder="What's your email address?"
+                className={`bg-tertiary py-4 px-6 placeholder:text-secondary text-white rounded-lg outline-none border ${errors.email ? 'border-red-500' : 'border-transparent'} font-medium transition-all duration-300 focus:border-[#915EFF]`}
+              />
+            </label>
+            {errors.email && (
+              <motion.p 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-red-500 text-sm mt-2 ml-1"
+              >
+                {errors.email}
+              </motion.p>
+            )}
+          </div>
+          
+          <div className="relative">
+            <label className='flex flex-col'>
+              <span className='text-white font-medium mb-4'>Your Message</span>
+              <textarea
+                rows={7}
+                name='message'
+                value={form.message}
+                onChange={handleChange}
+                placeholder="How can I help you?"
+                className={`bg-tertiary py-4 px-6 placeholder:text-secondary text-white rounded-lg outline-none border ${errors.message ? 'border-red-500' : 'border-transparent'} font-medium transition-all duration-300 focus:border-[#915EFF]`}
+              />
+            </label>
+            {errors.message && (
+              <motion.p 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-red-500 text-sm mt-2 ml-1"
+              >
+                {errors.message}
+              </motion.p>
+            )}
+          </div>
+          
+          <motion.button
             type='submit'
-            className='bg-tertiary py-3 px-8 rounded-xl outline-none w-fit text-white font-bold shadow-md shadow-primary hover:bg-[#915EFF] hover:scale-105 transition-all duration-300 relative overflow-hidden group'
+            className='bg-tertiary py-3 px-8 rounded-xl outline-none w-fit text-white font-bold shadow-md shadow-primary hover:bg-[#915EFF] hover:shadow-[#915EFF]/20 transition-all duration-300 relative overflow-hidden group disabled:opacity-70 disabled:hover:bg-tertiary'
+            whileTap={{ scale: 0.95 }}
+            disabled={loading}
           >
             <span className="absolute h-0 w-0 bg-white rounded-full opacity-10 group-hover:w-[300px] group-hover:h-[300px] duration-700 origin-center transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"></span>
             <span className="relative z-10 flex items-center justify-center">
-              {loading ? "Sending..." : "Send Message"}
-              {!loading && 
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              }
+              {loading ? (
+                <div className="flex items-center">
+                  <svg className="animate-spin mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Sending...</span>
+                </div>
+              ) : (
+                <>
+                  Send Message
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </>
+              )}
             </span>
-          </button>
+          </motion.button>
         </form>
       </motion.div>
-
+      
       <motion.div
         variants={slideIn("right", "tween", 0.2, 1)}
-        className='xl:flex-1 xl:h-auto md:h-[550px] h-[350px]'
+        className='xl:flex-1 xl:h-auto md:h-[550px] h-[350px] overflow-hidden'
       >
         <EarthCanvas />
       </motion.div>

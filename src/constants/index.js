@@ -23,6 +23,7 @@ import {
   jobit,
   tripguide,
   threejs,
+ 
 } from "../assets";
 
 export const navLinks = [
@@ -147,13 +148,11 @@ const experiences = [
     ],
   },
   {
-    title: "Bachelor of Science in Software Engineering",
-    company_name: "National University of Computer and Emerging Sciences (FAST), Pakistan",
-    icon: shopify, // Replace with appropriate icon
+   title: "Bachelor of Computer Sciences",
+    company_name: "FAST National University of Computer and Emerging Sciences",
     iconBg: "#383E56",
     date: "2019 - 2024",
     points: [
-      "Completed coursework in Data Structures, Algorithms, Database Systems, and Web Development.",
       "Developed a UML Class Diagram Compiler as a Final Year Project with 90% syntactic and semantic accuracy.",
       "Conducted air pollution data analysis using Python and machine learning models.",
       "Participated in coding competitions and hackathons."
@@ -188,119 +187,119 @@ const testimonials = [
   },
 ];
 
-const projects = [
+export const projects = [
   {
-    name: "KJ-GROUPS Portfolio Site",
+    name: "KJ GROUPS",
     description:
-      "Multi-site restaurant platform with payment integration, reservation system, and order management features. Built to showcase four restaurant brands under one umbrella.",
+      "Central hub for a collection of restaurant brands including Soul Sushi, Korean Munchies, and Korean BBQ locations. Built with React, Tailwind CSS, and TypeScript to deliver a modern, fast-loading user experience with clean navigation and brand unity.",
     tags: [
       {
         name: "react",
-        color: "blue-text-gradient",
+        color: "text-[#61DAFB]",
       },
       {
-        name: "node",
-        color: "green-text-gradient",
+        name: "tailwindcss",
+        color: "text-[#38BDF8]",
       },
       {
-        name: "stripe",
-        color: "pink-text-gradient",
-      },
-      {
-        name: "supabase",
-        color: "orange-text-gradient",
+        name: "typescript",
+        color: "text-[#3178C6]",
       },
     ],
-    image: carrent, // Use an appropriate image
-    source_code_link: "https://github.com/",
     live_site_link: "https://www.kjgroups.co.uk/",
   },
   {
-    name: "Soul Sushi & Korean Munchies",
+    name: "Soul Sushi",
     description:
-      "Online ordering and menu systems for two restaurants with Stripe payment integration. Includes responsive design and interactive menu displays.",
+      "Custom online ordering platform with a categorized menu system, high-quality visuals, and Stripe payment integration. Admins can update food items in real-time through Supabase backend, offering a seamless ordering experience on any device.",
     tags: [
       {
         name: "react",
-        color: "blue-text-gradient",
-      },
-      {
-        name: "tailwind",
-        color: "green-text-gradient",
+        color: "text-[#61DAFB]",
       },
       {
         name: "stripe",
-        color: "pink-text-gradient",
+        color: "text-[#6772E5]",
+      },
+      {
+        name: "supabase",
+        color: "text-[#3ECF8E]",
+      },
+      {
+        name: "nodejs",
+        color: "text-[#339933]",
       },
     ],
-    image: jobit, // Use an appropriate image
-    source_code_link: "https://github.com/",
     live_site_link: "https://www.soulsushi.kjgroups.co.uk/",
   },
   {
-    name: "Korean BBQ Edinburgh & Dundee",
+    name: "Korean Munchies",
     description:
-      "Table reservation systems for two restaurant locations with responsive UI and animated elements. Includes booking management and user notifications.",
+      "Intuitive, mobile-optimized food ordering system with clean layout, categorized menu, Stripe integration, and location guidance. Developed with React, TypeScript and Tailwind CSS to enhance customer satisfaction through simplified online ordering.",
     tags: [
       {
         name: "react",
-        color: "blue-text-gradient",
+        color: "text-[#61DAFB]",
       },
       {
-        name: "framer-motion",
-        color: "green-text-gradient",
+        name: "typescript",
+        color: "text-[#3178C6]",
       },
       {
-        name: "sequelize",
-        color: "pink-text-gradient",
+        name: "tailwindcss",
+        color: "text-[#38BDF8]",
+      },
+      {
+        name: "stripe",
+        color: "text-[#6772E5]",
       },
     ],
-    image: tripguide, // Use an appropriate image
-    source_code_link: "https://github.com/",
+    live_site_link: "https://www.koreanmunchies.kjgroups.co.uk/",
+  },
+  {
+    name: "Korean BBQ Edinburgh",
+    description:
+      "Restaurant site with a streamlined online reservation system including date-time picker, elegant gallery, and contact forms. Built with React, Tailwind CSS, and Material UI, it reduced manual booking calls by over 50% while enhancing digital presence.",
+    tags: [
+      {
+        name: "react",
+        color: "text-[#61DAFB]",
+      },
+      {
+        name: "materialui",
+        color: "text-[#0081CB]",
+      },
+      {
+        name: "tailwindcss",
+        color: "text-[#38BDF8]",
+      },
+    ],
     live_site_link: "https://www.koreanbbq.kjgroups.co.uk/",
   },
   {
-    name: "UML Class Diagram Compiler",
+    name: "Korean BBQ Dundee",
     description:
-      "Final Year Project that converts UML diagrams into skeleton code. Includes XML-to-string parser and code generator. Achieved 90% syntactic and semantic accuracy.",
+      "Advanced site featuring Framer Motion animations, categorized digital menus with descriptions, interactive elements, and user analytics. Built with React, TypeScript, and Vite, it exemplifies modern frontend development combining performance and design.",
     tags: [
       {
-        name: "javascript",
-        color: "blue-text-gradient",
+        name: "react",
+        color: "text-[#61DAFB]",
       },
       {
-        name: "xml",
-        color: "green-text-gradient",
+        name: "typescript",
+        color: "text-[#3178C6]",
       },
       {
-        name: "parsing",
-        color: "pink-text-gradient",
+        name: "framermotion",
+        color: "text-[#FF4D4D]",
+      },
+      {
+        name: "vite",
+        color: "text-[#646CFF]",
       },
     ],
-    image: tripguide, // Use an appropriate image
-    source_code_link: "https://github.com/",
-  },
-  {
-    name: "Air Pollution Analysis",
-    description:
-      "Python project analyzing PM 2.5 data (2016–2022) using Pandas, Matplotlib, and machine learning models for predictions. Achieved 85% accuracy with linear and logistic regression.",
-    tags: [
-      {
-        name: "python",
-        color: "blue-text-gradient",
-      },
-      {
-        name: "pandas",
-        color: "green-text-gradient",
-      },
-      {
-        name: "machine-learning",
-        color: "pink-text-gradient",
-      },
-    ],
-    image: tripguide, // Use an appropriate image
-    source_code_link: "https://github.com/",
+    live_site_link: "https://www.koreanbbqdundee.kjgroups.co.uk/",
   },
 ];
 
-export { services, technologies, experiences, testimonials, projects };
+export { services, technologies, experiences, testimonials };
